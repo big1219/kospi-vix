@@ -1,0 +1,23 @@
+  name: VKOSPI Daily Alert
+
+# 매일 오전 9시(KST) 코스피 변동성지수(VKOSPI)를 텔레그램으로 알림.
+# 09:03 KST = 00:03 UTC. 평일(월~금)만 실행.
+# 주말 포함하려면 cron을 '3 0 * * *' 로 변경.
+on:
+  schedule:
+    - cron: "3 0 * * 1-5"
+  workflow_dispatch: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Send VKOSPI alert
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/vkospi_alert.py
